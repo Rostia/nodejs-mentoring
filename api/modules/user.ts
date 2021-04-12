@@ -1,21 +1,22 @@
 import db from '../db';
+import UserType from '../types/user';
 import { v4 as uuidv4 } from 'uuid';
 
-const userTemplate = {
+const userTemplate: UserType = {
     id: '',
     login: '',
     password: '',
-    age: null,
+    age: NaN,
     isDeleted: false
 };
 
 class User {
-    get(id) {
+    get(id: string): UserType | undefined {
         return db.users.find(({ id: userId }) => userId === id);
     }
 
-    add(user) {
-        const newUser = {
+    add(user: UserType): UserType {
+        const newUser: UserType = {
             ...userTemplate,
             id: uuidv4(),
             ...user
@@ -25,27 +26,17 @@ class User {
         return newUser;
     }
 
-    update(id, user) {
-        const newUser = Object.assign({}, user);
-        delete newUser.id;
-        const index = db.users.findIndex(({ id: userId }) => userId === id);
-
-        if (index === -1) {
-            throw new Error(`Doesn't exist user with ${id} ID`);
-        }
+    update(id: string, user: UserType) {
+        const index = this.getIndex(id);
 
         db.users[index] = {
             ...db.users[index],
-            ...newUser
+            ...user
         };
     }
 
-    delete(id) {
-        const index = db.users.findIndex(({ id: userId }) => userId === id);
-
-        if (index === -1) {
-            throw new Error(`Doesn't exist user with ${id} ID`);
-        }
+    delete(id: string) {
+        const index = this.getIndex(id);
 
         db.users[index] = {
             ...db.users[index],
@@ -53,7 +44,7 @@ class User {
         };
     }
 
-    getAutoSuggestUsers(loginSubstring = '', limit = 20) {
+    getAutoSuggestUsers(loginSubstring: string = '', limit: number = 20): Array<UserType> {
         let resultList = [...db.users];
 
         if (loginSubstring) {
@@ -61,6 +52,18 @@ class User {
         }
 
         return resultList.slice(0, limit);
+    }
+
+    getIndex(id: string): number {
+        return db.users.findIndex(({ id: userId }) => userId === id);
+    }
+
+    exist(id: string): boolean {
+        if (this.getIndex(id) !== -1) {
+            return true;
+        }
+
+        return false;
     }
 }
 
