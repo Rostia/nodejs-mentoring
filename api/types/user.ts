@@ -1,9 +1,9 @@
 type User = {
-  id?: string,
+  id?: number,
   login: string,
   password: string,
   age: number,
-  isDeleted: boolean
+  isDeleted?: boolean
 };
 
 export default User;
