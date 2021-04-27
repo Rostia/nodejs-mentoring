@@ -1,72 +1,43 @@
-import db from '../db';
-import UserType from '../types/user';
-import { v4 as uuidv4 } from 'uuid';
+import { Model, DataTypes } from 'sequelize';
+import sequelize from '../db/connect';
 
-const userTemplate: UserType = {
-    id: '',
-    login: '',
-    password: '',
-    age: NaN,
-    isDeleted: false
-};
-
-class User {
-    get(id: string): UserType | undefined {
-        return db.users.find(({ id: userId }) => userId === id);
-    }
-
-    add(user: UserType): UserType {
-        const newUser: UserType = {
-            ...userTemplate,
-            id: uuidv4(),
-            ...user
-        };
-        db.users.push(newUser);
-
-        return newUser;
-    }
-
-    update(id: string, user: UserType) {
-        const index = this.getIndex(id);
-
-        db.users[index] = {
-            ...db.users[index],
-            ...user
-        };
-    }
-
-    delete(id: string) {
-        const index = this.getIndex(id);
-
-        db.users[index] = {
-            ...db.users[index],
-            isDeleted: true
-        };
-    }
-
-    getAutoSuggestUsers(loginSubstring: string = '', limit: number = 20): Array<UserType> {
-        let resultList = [...db.users];
-
-        if (loginSubstring) {
-            resultList = resultList.filter(({ login }) => login.indexOf(loginSubstring) !== -1);
-        }
-
-        return resultList.slice(0, limit);
-    }
-
-    getIndex(id: string): number {
-        return db.users.findIndex(({ id: userId }) => userId === id);
-    }
-
-    exist(id: string): boolean {
-        if (this.getIndex(id) !== -1) {
-            return true;
-        }
-
-        return false;
-    }
+class User extends Model {
+    id!: number;
+    login: string;
+    password: string;
+    age: number;
+    isDeleted: boolean;
 }
 
-const user = new User();
+User.init(
+    {
+        id: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        login: {
+            type: new DataTypes.STRING(128),
+            allowNull: false
+        },
+        password: {
+            type: new DataTypes.STRING(128),
+            allowNull: false
+        },
+        age: {
+            type: new DataTypes.INTEGER(),
+            allowNull: true,
+            defaultValue: 0
+        },
+        isDeleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        }
+    },
+    {
+        tableName: 'users',
+        sequelize
+    }
+);
 
-export default user;
+export default User;

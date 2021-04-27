@@ -1,56 +1,54 @@
 import { Request, Response } from 'express';
-import user from '../modules/user';
-
-const ERROR_MESSAGE_404 = 'User not found!';
+import UserService from '../secvices/user.service';
 
 class UserController {
-    get(req: Request, res: Response) {
+    public async get(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const result = user.get(id);
+        const user = new UserService();
 
-        if (!result) {
-            return res.status(404).end(ERROR_MESSAGE_404);
-        }
+        const result = await user.getById(+id);
 
         res.json(result);
     }
 
-    add(req: Request, res: Response) {
+    public async add(req: Request, res: Response): Promise<void> {
         const { body } = req;
+        const user = new UserService();
 
-        res.json(user.add(body));
+        const result = await user.create(body);
+
+        res.json(result);
     }
 
-    update(req: Request, res: Response) {
+    public async update(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         const { body } = req;
+        const user = new UserService();
 
-        if (!user.exist(id)) {
-            return res.status(404).end(ERROR_MESSAGE_404);
-        }
+        const result = await user.update(+id, body);
 
-        res.json(user.update(id, body));
+        res.json(result);
     }
 
-    delete(req: Request, res: Response) {
+    public async delete(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
+        const user = new UserService();
 
-        if (!user.exist(id)) {
-            return res.status(404).end(ERROR_MESSAGE_404);
-        }
+        const result = await user.delete(+id);
 
-        res.json(user.delete(id));
+        res.json(result);
     }
 
-    list(req: Request, res: Response) {
-        const { login } = req.query;
-        const limit = Number(req.query.limit);
+    public async list(req: Request, res: Response): Promise<void> {
+        const {
+            login = '',
+            limit = 5
+        } = req.query;
+        const user = new UserService();
 
-        if (isNaN(limit)) {
-            return res.status(400).end('limit: should be a number');
-        }
+        const results = await user.search(login?.toString(), +limit);
 
-        res.json(user.getAutoSuggestUsers(login?.toString(), Number(limit)));
+        res.json(results);
     }
 }
 
