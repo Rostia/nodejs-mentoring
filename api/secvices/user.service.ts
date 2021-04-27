@@ -1,11 +1,10 @@
 import user from '../modules/user';
 import { Op } from 'sequelize';
-import UserType from '../types/user';
 
 class UserService {
-    public static async getById(id: number): Promise<UserType> {
+    public async getById(id: number): Promise<user> {
         try {
-            const result: UserType = await user.findByPk(id);
+            const result: user = await user.findByPk(id);
 
             return result;
         } catch {
@@ -13,9 +12,9 @@ class UserService {
         }
     }
 
-    public static async create(data: UserType): Promise<UserType> {
+    public async create(data: user): Promise<user> {
         try {
-            const result: UserType = await user.create(data);
+            const result: user = await user.create(data);
 
             return result;
         } catch (err) {
@@ -23,7 +22,7 @@ class UserService {
         }
     }
 
-    public static async update(id: number, data: UserType): Promise<void> {
+    public async update(id: number, data: user): Promise<void> {
         try {
             await user.update(data, {
                 where: { id }
@@ -33,7 +32,7 @@ class UserService {
         }
     }
 
-    public static async delete(id: number): Promise<void> {
+    public async delete(id: number): Promise<void> {
         try {
             await user.update({
                 isDeleted: true
@@ -45,9 +44,9 @@ class UserService {
         }
     }
 
-    public static async search(login: string, limit: number): Promise<Array<UserType>> {
+    public async search(login: string, limit: number): Promise<Array<user>> {
         try {
-            const results: Array<UserType> = await user.findAll({
+            const results: Array<user> = await user.findAll({
                 where: {
                     login: {
                         [Op.like]: `%${login}%`
