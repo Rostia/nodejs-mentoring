@@ -52,6 +52,8 @@ class GroupService {
                 return UserGroup.create({
                     UserId: id,
                     GroupId: groupId
+                }, {
+                    transaction
                 });
             }));
 
