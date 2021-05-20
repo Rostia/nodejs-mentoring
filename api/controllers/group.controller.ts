@@ -2,20 +2,24 @@ import { Request, Response } from 'express';
 import GroupService from '../secvices/group.service';
 
 class GroupController {
+    private groupService: GroupService;
+
+    constructor() {
+        this.groupService = new GroupService();
+    }
+
     public async get(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const groupService = new GroupService();
 
-        const group = await groupService.getById(id);
+        const group = await this.groupService.getById(id);
 
         res.json(group);
     }
 
     public async add(req: Request, res: Response): Promise<void> {
         const { body } = req;
-        const groupService = new GroupService();
 
-        const group = await groupService.create(body);
+        const group = await this.groupService.create(body);
 
         res.json(group);
     }
@@ -23,18 +27,16 @@ class GroupController {
     public async update(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         const { body } = req;
-        const groupService = new GroupService();
 
-        const group = await groupService.update(id, body);
+        const group = await this.groupService.update(id, body);
 
         res.json(group);
     }
 
     public async delete(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const groupService = new GroupService();
 
-        const group = await groupService.delete(id);
+        const group = await this.groupService.delete(id);
 
         res.json(group);
     }
@@ -45,16 +47,10 @@ class GroupController {
             usersId
         } } = req;
 
-        const groupService = new GroupService();
+        await this.groupService.addUsersToGroup(groupId, usersId);
 
-        await groupService.addUsersToGroup(groupId, usersId);
-
-        res.json({
-            test: 'aaa'
-        });
+        res.json({});
     }
 }
 
-const groupController = new GroupController();
-
-export default groupController;
+export default GroupController;
