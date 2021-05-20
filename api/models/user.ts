@@ -1,5 +1,6 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, HasManyGetAssociationsMixin, Association } from 'sequelize';
 import sequelize from '../db/connect';
+import Group from './group';
 
 class User extends Model {
     id!: number;
@@ -7,6 +8,14 @@ class User extends Model {
     password: string;
     age: number;
     isDeleted: boolean;
+
+    public getGroups!: HasManyGetAssociationsMixin<Group>;
+
+    public readonly groups?: Group[];
+
+    public static associations: {
+        groups: Association<User, Group>;
+    };
 }
 
 User.init(
@@ -37,7 +46,7 @@ User.init(
     {
         tableName: 'users',
         sequelize
-    }
+    },
 );
 
 export default User;

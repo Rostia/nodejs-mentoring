@@ -1,20 +1,22 @@
-import user from '../modules/user';
+import { User, Group } from '../models';
 import { Op } from 'sequelize';
 
 class UserService {
-    public async getById(id: number): Promise<user> {
+    public async getById(id: number): Promise<User> {
         try {
-            const result: user = await user.findByPk(id);
+            const user: User = await User.findByPk(id, {
+                include: Group
+            });
 
-            return result;
-        } catch {
-            throw new Error('404 User not found');
+            return user;
+        } catch (err) {
+            throw new Error(err);
         }
     }
 
-    public async create(data: user): Promise<user> {
+    public async create(data: User): Promise<User> {
         try {
-            const result: user = await user.create(data);
+            const result: User = await User.create(data);
 
             return result;
         } catch (err) {
@@ -22,9 +24,9 @@ class UserService {
         }
     }
 
-    public async update(id: number, data: user): Promise<void> {
+    public async update(id: number, data: User): Promise<void> {
         try {
-            await user.update(data, {
+            await User.update(data, {
                 where: { id }
             });
         } catch {
@@ -34,7 +36,7 @@ class UserService {
 
     public async delete(id: number): Promise<void> {
         try {
-            await user.update({
+            await User.update({
                 isDeleted: true
             }, {
                 where: { id }
@@ -44,9 +46,9 @@ class UserService {
         }
     }
 
-    public async search(login: string, limit: number): Promise<Array<user>> {
+    public async search(login: string, limit: number): Promise<Array<User>> {
         try {
-            const results: Array<user> = await user.findAll({
+            const results: Array<User> = await User.findAll({
                 where: {
                     login: {
                         [Op.like]: `%${login}%`

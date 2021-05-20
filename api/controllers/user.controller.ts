@@ -2,41 +2,43 @@ import { Request, Response } from 'express';
 import UserService from '../secvices/user.service';
 
 class UserController {
+    userService: UserService;
+
+    constructor() {
+        this.userService = new UserService();
+    }
+
     public async get(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const user = new UserService();
 
-        const result = await user.getById(+id);
+        const user = await this.userService.getById(+id);
 
-        res.json(result);
+        res.json(user);
     }
 
     public async add(req: Request, res: Response): Promise<void> {
         const { body } = req;
-        const user = new UserService();
 
-        const result = await user.create(body);
+        const user = await this.userService.create(body);
 
-        res.json(result);
+        res.json(user);
     }
 
     public async update(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         const { body } = req;
-        const user = new UserService();
 
-        const result = await user.update(+id, body);
+        const user = await this.userService.update(+id, body);
 
-        res.json(result);
+        res.json(user);
     }
 
     public async delete(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        const user = new UserService();
 
-        const result = await user.delete(+id);
+        const user = await this.userService.delete(+id);
 
-        res.json(result);
+        res.json(user);
     }
 
     public async list(req: Request, res: Response): Promise<void> {
@@ -44,14 +46,11 @@ class UserController {
             login = '',
             limit = 5
         } = req.query;
-        const user = new UserService();
 
-        const results = await user.search(login?.toString(), +limit);
+        const users = await this.userService.search(login?.toString(), +limit);
 
-        res.json(results);
+        res.json(users);
     }
 }
 
-const userController = new UserController();
-
-export default userController;
+export default UserController;
