@@ -3,6 +3,7 @@ import express from 'express';
 import appRoutes from './routes';
 import sequelize from './db/connect';
 import errorServerHandler from './middleware/error.server';
+import cors from 'cors';
 
 const {
     APP_PORT
@@ -15,17 +16,9 @@ process.on('unhandledRejection', (error: Error) => {
 
 app.use(express.json());
 app.use(express.urlencoded());
+app.use(cors());
 
 app.use('/api', appRoutes);
-app.get('/test', (req, res, next) => {
-    setTimeout(() => {
-        try {
-            throw new Error('BROKEN');
-        } catch (err) {
-            next(err);
-        }
-    }, 100);
-});
 
 app.use(errorServerHandler);
 

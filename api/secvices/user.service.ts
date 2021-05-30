@@ -64,6 +64,21 @@ class UserService {
             throw new CustomError('Bad request', { login, limit }, 400);
         }
     }
+
+    public async getByLogAndPass(login: string, password: string): Promise<User> {
+        try {
+            const results: User = await User.findOne({
+                where: {
+                    login,
+                    password
+                }
+            });
+
+            return results;
+        } catch {
+            throw new CustomError('Bad request', { login, password }, 400);
+        }
+    }
 }
 
 export default UserService;
