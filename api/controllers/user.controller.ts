@@ -7,7 +7,7 @@ class UserController {
             const { id } = req.params;
             const userService = new UserService();
 
-            const user = await userService.getById(+id).catch(next);
+            const user = await userService.getById(+id);
 
             res.json(user);
         } catch (error) {
