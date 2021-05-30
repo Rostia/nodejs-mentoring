@@ -2,12 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import UserService from '../secvices/user.service';
 
 class UserController {
+    userService: UserService;
+
+    constructor() {
+        this.userService = new UserService();
+    }
+
     public async get(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const userService = new UserService();
 
-            const user = await userService.getById(+id);
+            const user = await this.userService.getById(+id);
 
             res.json(user);
         } catch (error) {
@@ -18,9 +23,8 @@ class UserController {
     public async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { body } = req;
-            const userService = new UserService();
 
-            const user = await userService.create(body);
+            const user = await this.userService.create(body);
 
             res.json(user);
         } catch (error) {
@@ -32,9 +36,8 @@ class UserController {
         try {
             const { id } = req.params;
             const { body } = req;
-            const userService = new UserService();
 
-            const user = await userService.update(+id, body);
+            const user = await this.userService.update(+id, body);
 
             res.json(user);
         } catch (error) {
@@ -45,9 +48,8 @@ class UserController {
     public async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const userService = new UserService();
 
-            const user = await userService.delete(+id);
+            const user = await this.userService.delete(+id);
 
             res.json(user);
         } catch (error) {
@@ -61,9 +63,8 @@ class UserController {
                 login = '',
                 limit = 5
             } = req.query;
-            const userService = new UserService();
 
-            const users = await userService.search(login?.toString(), +limit);
+            const users = await this.userService.search(login?.toString(), +limit);
 
             res.json(users);
         } catch (error) {

@@ -2,12 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import GroupService from '../secvices/group.service';
 
 class GroupController {
+    private groupService: GroupService;
+
+    constructor() {
+        this.groupService = new GroupService();
+    }
+
     public async get(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const groupService = new GroupService();
 
-            const group = await groupService.getById(id);
+            const group = await this.groupService.getById(id);
 
             res.json(group);
         } catch (error) {
@@ -18,9 +23,8 @@ class GroupController {
     public async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { body } = req;
-            const groupService = new GroupService();
 
-            const group = await groupService.create(body);
+            const group = await this.groupService.create(body);
 
             res.json(group);
         } catch (error) {
@@ -32,9 +36,8 @@ class GroupController {
         try {
             const { id } = req.params;
             const { body } = req;
-            const groupService = new GroupService();
 
-            const group = await groupService.update(id, body);
+            const group = await this.groupService.update(id, body);
 
             res.json(group);
         } catch (error) {
@@ -45,9 +48,8 @@ class GroupController {
     public async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
-            const groupService = new GroupService();
 
-            const group = await groupService.delete(id);
+            const group = await this.groupService.delete(id);
 
             res.json(group);
         } catch (error) {
@@ -62,13 +64,9 @@ class GroupController {
                 usersId
             } } = req;
 
-            const groupService = new GroupService();
+            await this.groupService.addUsersToGroup(groupId, usersId);
 
-            await groupService.addUsersToGroup(groupId, usersId);
-
-            res.json({
-                test: 'aaa'
-            });
+            res.json({});
         } catch (error) {
             return next(error);
         }
