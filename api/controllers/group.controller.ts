@@ -73,6 +73,4 @@ class GroupController {
     }
 }
 
-const groupController = new GroupController();
-
-export default groupController;
+export default GroupController;
