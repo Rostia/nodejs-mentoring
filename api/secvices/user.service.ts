@@ -1,17 +1,18 @@
 import { User, Group } from '../models';
 import { Op } from 'sequelize';
+import CustomError from '../errors/custom.error';
 
 class UserService {
     public async getById(id: number): Promise<User> {
-        try {
-            const user: User = await User.findByPk(id, {
-                include: Group
-            });
+        const user: User = await User.findByPk(id, {
+            include: Group
+        });
 
-            return user;
-        } catch (err) {
-            throw new Error(err);
+        if (!user) {
+            throw new CustomError('User not found', { id }, 404);
         }
+
+        return user;
     }
 
     public async create(data: User): Promise<User> {
@@ -20,7 +21,7 @@ class UserService {
 
             return result;
         } catch (err) {
-            throw new Error(err);
+            throw new CustomError('Bad request', { data }, 400);
         }
     }
 
@@ -30,7 +31,7 @@ class UserService {
                 where: { id }
             });
         } catch {
-            throw new Error('400 Bad Request');
+            throw new CustomError('Bad request', { data, id }, 400);
         }
     }
 
@@ -42,7 +43,7 @@ class UserService {
                 where: { id }
             });
         } catch {
-            throw new Error('400 Bad Request');
+            throw new CustomError('Bad request', { id }, 400);
         }
     }
 
@@ -60,7 +61,7 @@ class UserService {
 
             return results;
         } catch {
-            throw new Error('400 Bad Request');
+            throw new CustomError('Bad request', { login, limit }, 400);
         }
     }
 }

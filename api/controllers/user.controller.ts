@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import UserService from '../secvices/user.service';
+import measure from '../utils/mesure.decorator';
 
 class UserController {
     userService: UserService;
@@ -8,48 +9,69 @@ class UserController {
         this.userService = new UserService();
     }
 
-    public async get(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+    @measure
+    public async get(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
 
-        const user = await this.userService.getById(+id);
+            const user = await this.userService.getById(+id);
 
-        res.json(user);
+            res.json(user);
+        } catch (error) {
+            return next(error);
+        }
     }
 
-    public async add(req: Request, res: Response): Promise<void> {
-        const { body } = req;
+    public async add(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { body } = req;
 
-        const user = await this.userService.create(body);
+            const user = await this.userService.create(body);
 
-        res.json(user);
+            res.json(user);
+        } catch (error) {
+            return next(error);
+        }
     }
 
-    public async update(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
-        const { body } = req;
+    public async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
+            const { body } = req;
 
-        const user = await this.userService.update(+id, body);
+            const user = await this.userService.update(+id, body);
 
-        res.json(user);
+            res.json(user);
+        } catch (error) {
+            return next(error);
+        }
     }
 
-    public async delete(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+    public async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
 
-        const user = await this.userService.delete(+id);
+            const user = await this.userService.delete(+id);
 
-        res.json(user);
+            res.json(user);
+        } catch (error) {
+            return next(error);
+        }
     }
 
-    public async list(req: Request, res: Response): Promise<void> {
-        const {
-            login = '',
-            limit = 5
-        } = req.query;
+    public async list(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {
+                login = '',
+                limit = 5
+            } = req.query;
 
-        const users = await this.userService.search(login?.toString(), +limit);
+            const users = await this.userService.search(login?.toString(), +limit);
 
-        res.json(users);
+            res.json(users);
+        } catch (error) {
+            return next(error);
+        }
     }
 }
 

@@ -1,15 +1,16 @@
 import { Group, UserGroup } from '../models';
 import sequelize from '../db/connect';
+import CustomError from '../errors/custom.error';
 
 class GroupService {
     public async getById(id: string): Promise<Group> {
-        try {
-            const group: Group = await Group.findByPk(id);
+        const group: Group = await Group.findByPk(id);
 
-            return group;
-        } catch {
-            throw new Error('404 Group not found');
+        if (!group) {
+            throw new CustomError('Group not found', { id }, 404);
         }
+
+        return group;
     }
 
     public async create(data: Group): Promise<Group> {
@@ -18,7 +19,7 @@ class GroupService {
 
             return group;
         } catch (err) {
-            throw new Error(err);
+            throw new CustomError('Bad request', { data }, 400);
         }
     }
 
@@ -28,7 +29,7 @@ class GroupService {
                 where: { id }
             });
         } catch {
-            throw new Error('400 Bad Request');
+            throw new CustomError('Bad request', { id, data }, 400);
         }
     }
 
@@ -40,7 +41,7 @@ class GroupService {
                 }
             });
         } catch {
-            throw new Error('400 Bad Request');
+            throw new CustomError('Bad request', { id }, 400);
         }
     }
 
@@ -60,7 +61,7 @@ class GroupService {
             await transaction.commit();
         } catch (err) {
             await transaction.rollback();
-            throw new Error(err);
+            throw new CustomError('Bad request', { groupId, usersId }, 400);
         }
     }
 }
