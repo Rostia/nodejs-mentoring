@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import UserService from '../secvices/user.service';
+import measure from '../utils/mesure.decorator';
 
 class UserController {
     userService: UserService;
@@ -8,6 +9,7 @@ class UserController {
         this.userService = new UserService();
     }
 
+    @measure
     public async get(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
