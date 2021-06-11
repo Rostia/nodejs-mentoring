@@ -28,7 +28,7 @@ class UserController {
 
             const user = await this.userService.create(body);
 
-            res.json(user);
+            res.status(201).json(user);
         } catch (error) {
             return next(error);
         }
@@ -67,6 +67,8 @@ class UserController {
             } = req.query;
 
             const users = await this.userService.search(login?.toString(), +limit);
+            console.log('test');
+
 
             res.json(users);
         } catch (error) {
